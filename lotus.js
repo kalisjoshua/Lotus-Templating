@@ -1,50 +1,67 @@
 var lotus = (function (undefined) {
     var next = function (tmpl) {
-            /* regex result parts
+            /* regex result items
                 0 - full match
                 1 - block identifier/lookup key
                 2 - block template
-                3 - else condition "template?"
+                3 - else condition
             */
             return tmpl.match(/\{([^\/\}]+)\}(?:(.*?)(?:\{\?\}(.*?))?\{\/\1\})?/);
         }
 
-        ,process = function (template, scope) {
+        // add scope chain argument for calling back up in the object
+        ,process = function (template, data, scope) {
             var node = next(template)
-                ,temp;
+                ,temp
+                ,value;
             
             if (node[1]) {
+                // if no scope was passed in start off with an empty scope chain
+                scope = scope || [];
+
                 while (node) {
+                    // push onto the scope all of the keys from the template
+                    [].push.apply(scope, node[1].split("."));
+                    value = resolve(data, scope);
+
                     // loop over the nodes in the template
-                    if (scope[node[1]]) {
-                        // check to see that there value is available in the scope
-                        if (scope[node[1]].toString() === scope[node[1]].valueOf()) {
+                    if (value) {
+                        // check to see that there value is available in the data
+                        if (value.toString() === value.valueOf()) {
                             // use the primitive value
-                            temp = scope[node[1]];
+                            temp = value;
                         } else {
                             // work on the complex objects
-                            if (({}).toString.call(scope[node[1]]) === "[object Array]") {
+                            if (({}).toString.call(value) === "[object Array]") {
                                 // loop over the elements of the value array
-                                for (var i = 0, len = scope[node[1]].length; i < len; i++) {
-                                    temp += node[2].replace(/\{item\}/g, scope[node[1]][i]);
+                                for (var i = 0, len = value.length; i < len; i++) {
+                                    temp += node[2].replace(/\{item\}/g, value[i]);
                                 }
                             } else {
                                 // if the value is an Object then recurse into the template
-                                temp = process(node[2], scope[node[1]]);
+                                temp = process(node[2], value, scope.slice(1));
                             }
                         }
                     } else {
-                        // if the data doesn't exist in the scope object attempt to use the else condition template
-                        temp = "" + node[3];
+                        // the data doesn't exist in the data object, use else condition
+                        temp = node[3] || "";
                     }
                     
                     template = template.replace(node[0], temp);
+                    scope = [];
                     temp = "";
                     node = next(template);
                 }
 
                 return template;
             }
+        }
+
+        resolve = function (data, scope) {
+
+            return (scope.length > 1 && data[scope[0]]
+                ? resolve(data[scope[0]], scope.slice(1))
+                : data[scope[0]]);
         };
     
     return function (template, data) {
