@@ -13,6 +13,29 @@ var compress = function (str) {
             }
         }
 
+        ,furniture: {
+            appliances: {
+                fridge: "Kenmore"
+                ,stove: "GE"
+            }
+
+            ,inside: {
+                bedroom: {
+                    dresser: "Malm"
+                }
+
+                ,livingroom: {
+                    chair: "Poang"
+                    ,table: "MSU carving"
+                }
+            }
+
+            ,outside: {
+                chair: "Adirondak?"
+                ,table: "Craftsman Style"
+            }
+        }
+
         ,joshua: {
             gender: "Male"
             ,hobbies: [
@@ -43,7 +66,7 @@ test("simple templating", function () {
             <p>{name}<strong>{last}</strong>, {first}{/name} - {gender}</p>\
             {calendar}\
             <calendar/>\
-            {?}\
+            {else}\
             no~calendar\
             {/calendar}\
             <ul>\
@@ -74,21 +97,7 @@ equal(compress(lotus(tmpl, test_data.joshua)), compress(expd), '{name}{last}, {f
 });
 
 test("scope chain relative-scoped properties", function () {
-    var data = {
-            contrived: {
-                example: "string"
-            }
-            ,nav: {
-                links: [
-                     "about"
-                    ,"home"
-                    ,"portfolio"
-                ]
-            }
-            ,prefix: "domain.com"
-        }
-
-        ,expd = 
+    var expd = 
         '<div>\
             <h1>domain.com</h1>\
             <ul>\

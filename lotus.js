@@ -1,3 +1,33 @@
+/*
+= Lotus - logically organized templating usable and simple - I just made that up!
+Syntaxically terse templating
+
+== Examples
+
+=== Simple variable lookup
+
+ >>> JavaScript
+ > data = {variable: "value"}
+ > template = "variable is {variable}"
+ > lotus(template, data)
+ > // yields: 'variable is value'
+
+=== Drill-down scope resolution
+
+ >>> JavaScript
+ > data = {name: {first: "Joshua", last: "Kalis"}}
+ > template = "My name is {name.first} {name.last}."
+ > lotus(template, data)
+ > // yields: 'My name is Joshua Kalis.'
+
+
+== TODO
+ - relative scope traversing using dotdot notation
+ - scope from the root of the object rather than relative to the current location
+ - inner template for arrays - arrays of objects instead of primitives
+ - extracting element(s) of an array by [index|range?]
+*/
+
 var lotus = (function (undefined) {
     var next = function (tmpl) {
             /* regex result items
@@ -6,7 +36,7 @@ var lotus = (function (undefined) {
                 2 - block template
                 3 - else condition
             */
-            return tmpl.match(/\{([^\/\}]+)\}(?:(.*?)(?:\{\?\}(.*?))?\{\/\1\})?/);
+            return tmpl.match(/\{([^\/\}]+)\}(?:(.*?)(?:\{else\}(.*?))?\{\/\1\})?/);
         }
 
         // add scope chain argument for calling back up in the object
@@ -91,7 +121,7 @@ var lotus = (function (undefined) {
                 }
             }
 
-            return result;
+            return result || ""; // did we find anything?
         };
     
     return function (template, data) {
