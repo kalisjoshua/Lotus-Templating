@@ -3,11 +3,18 @@ module("Lotus templating");
 var compress = function (str) {
         
         return str.replace(/\s+/g, "");
-    };
+    }
 
-test("simple templating", function () {    
-    var data = {
-             gender: "Male"
+    test_data = {
+        brittany: {
+            name: {
+                first: "Brittany"
+                ,last: "Stone"
+            }
+        }
+
+        ,joshua: {
+            gender: "Male"
             ,hobbies: [
                  "Art"
                 ,"JavaScript"
@@ -18,11 +25,13 @@ test("simple templating", function () {
                 ,last: "Kalis"
             }
         }
+    };
 
-        ,expd =
+test("simple templating", function () {    
+    var expd =
         '<div class="me">\
             <p><strong>Kalis</strong>, Joshua - Male</p>\
-            no calendar defined\
+            no~calendar\
             <ul>\
                 <li>Art\
                 <li>JavaScript\
@@ -35,7 +44,7 @@ test("simple templating", function () {
             {calendar}\
             <calendar/>\
             {?}\
-            no calendar defined\
+            no~calendar\
             {/calendar}\
             <ul>\
             {hobbies}\
@@ -43,27 +52,33 @@ test("simple templating", function () {
             {/hobbies}\
         </div>';
     
-    equal(compress(lotus(tmpl, data)), compress(expd), "output of template engine");
+equal(compress(lotus(tmpl, test_data.joshua)), compress(expd), "{name}{last}, {first}{/name}");
 });
 
-test("scope chain access child properties", function () {
-    var data = {
-            name: {
-                first: "Joshua"
-                ,last: "Kalis"
-            }
-        }
+test("drill-down access - child properties", function () {
+    var expd = '<p><strong>Stone</strong>, Brittany - </p>'
 
-        ,expd = '<p><strong>Kalis</strong>, Joshua - </p>'
-
-        ,tmpl = '<p><strong>{name.last}</strong>, {name.first} - {gender}</p>';
+        ,tmpl = '<p><strong>{name.last}</strong>, {name.first} - {age}</p>';
     
-    equal(compress(lotus(tmpl, data)), compress(expd), "<p><strong>{name.last}</strong>, {name.first} - {gender}</p>");
+equal(compress(lotus(tmpl, test_data.brittany)), compress(expd), "<p><strong>{name.last}</strong>, {name.first} - {age}</p>");
 });
 
-test("scope chain traversing up", function () {
+test("look up the chain - higher-scoped properties", function () {
+    var expd = 
+        'Kalis, Joshua - Male'
+
+        ,tmpl = 
+        '{name}{last}, {first} - {gender}{/name}';
+    
+equal(compress(lotus(tmpl, test_data.joshua)), compress(expd), '{name}{last}, {first} - {gender}{/name}');
+});
+
+test("scope chain relative-scoped properties", function () {
     var data = {
-            nav: {
+            contrived: {
+                example: "string"
+            }
+            ,nav: {
                 links: [
                      "about"
                     ,"home"
@@ -84,12 +99,49 @@ test("scope chain traversing up", function () {
 
         ,tmpl = 
         '<div>\
-            <h1>{prefix}</h1>\
             {nav}\
             <ul>\
-                {links}<li><a href="//{prefix}/{item}">{item}</a>{/links}\
+                {links}<li><a href="//{...contrived.example}/{item}">{item}</a>{/links}\
             {/nav}\
         </div>';
     
-    equal(compress(lotus(tmpl, data)), compress(expd), "output of template engine");
+// equal(compress(lotus(tmpl, data)), compress(expd), "output of template engine");
 });
+
+test("scope chain absolute-scoped properties", function () {
+    var data = {
+            contrived: {
+                example: "string"
+            }
+            ,nav: {
+                links: [
+                     "about"
+                    ,"home"
+                    ,"portfolio"
+                ]
+            }
+            ,prefix: "domain.com"
+        }
+
+        ,expd = 
+        '<div>\
+            <h1>domain.com</h1>\
+            <ul>\
+                <li><a href="//domain.com/about">about</a>\
+                <li><a href="//domain.com/home">home</a>\
+                <li><a href="//domain.com/portfolio">portfolio</a>\
+        </div>'
+
+        ,tmpl = 
+        '<div>\
+            {nav}\
+            <ul>\
+                {links}<li><a href="//{>contrived.example}/{item}">{item}</a>{/links}\
+            {/nav}\
+        </div>';
+    
+// equal(compress(lotus(tmpl, data)), compress(expd), "output of template engine");
+});
+
+
+// {array.[index|#]}
