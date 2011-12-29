@@ -24,7 +24,6 @@ Syntaxically terse templating
 == TODO
  - relative scope traversing using dotdot notation
  - scope from the root of the object rather than relative to the current location
- - inner template for arrays - arrays of objects instead of primitives
  - extracting element(s) of an array by [index|range?]
 */
 
@@ -41,8 +40,10 @@ var lotus = (function (undefined) {
 
         // add scope chain argument for calling back up in the object
         ,process = function (template, data, scope) {
-            var node = next(template)
-                ,temp
+            var i
+                ,len
+                ,node = next(template)
+                ,temp = ""
                 ,value;
             
             if (node[1]) {
@@ -61,28 +62,29 @@ var lotus = (function (undefined) {
                         } else {
                             // work on the complex objects
                             if (({}).toString.call(value) === "[object Array]") {
+                                len = value.length;
                                 // loop over the elements of the value array
-                                for (var i = 0, len = value.length; i < len; i++) {
-                                    temp += node[2].replace(/\{item\}/g, value[i]);
+                                for (i = 0; i < len; i++) {
+                                    temp += value[i].toString() === value[i].valueOf()
+                                        ? node[2].replace(/\{item\}/g, value[i])
+                                        : process(node[2], value[i]);
                                 }
                             } else {
-                                // console.log("~~~ Danger, recursion! ~~~");
                                 // push the node we are recursing into onto the scope chain
                                 scope.push(node[1]);
                                 // if the value is an Object then recurse into the template
                                 temp = process(node[2], data, scope);
                                 // remove the top of the scope chain now that it has been processed
                                 scope.pop();
-                                // console.log("~~~ end recursion. ~~~");
                             }
                         }
                     } else {
                         // the data doesn't exist in the data object, use else condition
-                        temp = node[3] || "";
+                        temp = node[3];
                     }
                     
                     // replace the full match with what was found
-                    template = template.replace(node[0], temp);
+                    template = template.replace(node[0], temp || "");
                     temp = "";
                     node = next(template);
                 }
