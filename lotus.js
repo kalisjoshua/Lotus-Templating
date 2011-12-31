@@ -60,22 +60,28 @@ var lotus = (function (undefined) {
                             // use the primitive value
                             temp = value;
                         } else {
-                            // work on the complex objects
-                            if (({}).toString.call(value) === "[object Array]") {
-                                len = value.length;
-                                // loop over the elements of the value array
-                                for (i = 0; i < len; i++) {
-                                    temp += value[i].toString() === value[i].valueOf()
-                                        ? node[2].replace(/\{item\}/g, value[i])
-                                        : process(node[2], value[i]);
+                            if (node[2].indexOf("{") >= 0) {
+                                // handle data-driven template sections
+                                // work on the complex objects
+                                if (({}).toString.call(value) === "[object Array]") {
+                                    len = value.length;
+                                    // loop over the elements of the value array
+                                    for (i = 0; i < len; i++) {
+                                        temp += value[i].toString() === value[i].valueOf()
+                                            ? node[2].replace(/\{item\}/g, value[i]) // array element is a primitive
+                                            : process(node[2], value[i]); // array element is a non-primitive
+                                    }
+                                } else {
+                                    // push the node we are recursing into onto the scope chain
+                                    scope.push(node[1]);
+                                    // if the value is an Object then recurse into the template
+                                    temp = process(node[2], data, scope);
+                                    // remove the top of the scope chain now that it has been processed
+                                    scope.pop();
                                 }
                             } else {
-                                // push the node we are recursing into onto the scope chain
-                                scope.push(node[1]);
-                                // if the value is an Object then recurse into the template
-                                temp = process(node[2], data, scope);
-                                // remove the top of the scope chain now that it has been processed
-                                scope.pop();
+                                // handle data-driven template sections
+                                temp = node[2];
                             }
                         }
                     } else {
@@ -116,6 +122,7 @@ var lotus = (function (undefined) {
             if (!result) {
                 // pop off the property being searched for
                 path.pop();
+                // recurse up the property tree to search for the property higher up
                 while (path.length && !result) {
                     // pop off the scope we just looked in since it isn't there
                     path.pop();

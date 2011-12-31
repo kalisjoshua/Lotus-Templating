@@ -90,7 +90,7 @@ test("drill-down access - child properties", function () {
 
         ,tmpl = '<p><strong>{name.last}</strong>, {name.first} - {age}</p>';
     
-// equal(compress(lotus(tmpl, test_data.brittany)), compress(expd), "<p><strong>{name.last}</strong>, {name.first} - {age}</p>");
+equal(compress(lotus(tmpl, test_data.brittany)), compress(expd), "<p><strong>{name.last}</strong>, {name.first} - {age}</p>");
 });
 
 test("look up the chain - higher-scoped properties", function () {
@@ -100,7 +100,7 @@ test("look up the chain - higher-scoped properties", function () {
         ,tmpl = 
         '{name}{last}, {first} - {gender}{/name}';
     
-// equal(compress(lotus(tmpl, test_data.joshua)), compress(expd), '{name}{last}, {first} - {gender}{/name}');
+equal(compress(lotus(tmpl, test_data.joshua)), compress(expd), '{name}{last}, {first} - {gender}{/name}');
 });
 
 test("recursive templates for complex objects as array elements", function () {
@@ -118,6 +118,24 @@ test("recursive templates for complex objects as array elements", function () {
 equal(compress(lotus(tmpl, test_data.cmp)), compress(expd), '{databases}<li>{name} - [{username}, {password}]{/databases}');
 });
 
+test("multiple instances of a property in the template", function () {
+    var expd = 
+        '<h2>Databases</h2>\
+        <ul>\
+            <li>abc - [qwerty, poiuy]\
+            <li>xyz - [3lkr;n09jefoniq30jf3, l23ioufds0n23r09dv0few89]\
+        </ul>'
+
+        ,tmpl = 
+        '{databases}<h2>Databases</h2>{/databases}\
+        <ul>\
+            {databases}<li>{name} - [{username}, {password}]{/databases}\
+        </ul>';
+    
+equal(compress(lotus(tmpl, test_data.cmp)), compress(expd), '{databases}<li>{name} - [{username}, {password}]{/databases}');
+});
+
+/*
 test("scope chain relative-scoped properties", function () {
     var expd = 
         '<div>\
@@ -176,3 +194,5 @@ test("scope chain absolute-scoped properties", function () {
 
 
 // {array.[index|#]}
+
+// */
