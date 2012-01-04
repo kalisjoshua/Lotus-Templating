@@ -135,6 +135,12 @@ test("multiple instances of a property in the template", function () {
 equal(compress(lotus(tmpl, test_data.cmp)), compress(expd), '{databases}<li>{name} - [{username}, {password}]{/databases}');
 });
 
+test("zero template areas in template", function () {
+    
+equal(lotus(''), '', 'empty template');
+equal(lotus('<h1>Hello World!</h1>'), '<h1>Hello World!</h1>', 'empty template');
+});
+
 /*
 test("scope chain relative-scoped properties", function () {
     var expd = 

@@ -46,7 +46,10 @@ var lotus = (function (undefined) {
                 ,temp = ""
                 ,value;
             
-            if (node[1]) {
+            if (!node) {
+                // nothing in the template to replace move on
+                return template;
+            } else if (node[1]) {
                 // if no scope was passed in start off with an empty scope chain
                 scope = scope || [];
 
