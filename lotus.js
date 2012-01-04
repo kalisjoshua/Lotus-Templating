@@ -28,14 +28,16 @@ Syntaxically terse templating
 */
 
 var lotus = (function (undefined) {
-    var next = function (tmpl) {
+    var next = function (tmpl, skip) {
             /* regex result items
                 0 - full match
                 1 - block identifier/lookup key
                 2 - block template
                 3 - else condition
             */
-            return tmpl.match(/\{([^\/\}]+)\}(?:(.*?)(?:\{else\}(.*?))?\{\/\1\})?/);
+            return tmpl
+                .slice(skip)
+                .match(/\{([^\/\}]+)\}(?:(.*?)(?:\{else\}(.*?))?\{\/\1\})?/);
         }
 
         // add scope chain argument for calling back up in the object
@@ -43,6 +45,7 @@ var lotus = (function (undefined) {
             var i
                 ,len
                 ,node = next(template)
+                ,skip = 0
                 ,temp = ""
                 ,value;
             
@@ -92,10 +95,16 @@ var lotus = (function (undefined) {
                         temp = node[3];
                     }
                     
+                    // place the caret at the begining of the current node to replace so as to skip past any
+                    // previously inserted data that might have content with syntax similar to templating
+                    skip = +template.indexOf(node[0]);
                     // replace the full match with what was found
-                    template = template.replace(node[0], temp || "");
+                    template = template.slice(0, skip) + template.slice(skip).replace(node[0], temp || "");
+                    // skip past the replacement for the current node
+                    skip += +((temp || "").length);
+
                     temp = "";
-                    node = next(template);
+                    node = next(template, skip);
                 }
 
                 return template;

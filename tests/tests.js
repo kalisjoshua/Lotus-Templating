@@ -141,6 +141,14 @@ equal(lotus(''), '', 'empty template');
 equal(lotus('<h1>Hello World!</h1>'), '<h1>Hello World!</h1>', 'empty template');
 });
 
+test("data with similar syntax as Lotus", function () {
+    var d = {data:'{"name": "Joshua"}'}
+        ,e = '<pre>{"name": "Joshua"}</pre>'
+        ,t = '<pre>{data}</pre>';
+    
+equal(lotus(t, d), e, t);
+});
+
 /*
 test("scope chain relative-scoped properties", function () {
     var expd = 
