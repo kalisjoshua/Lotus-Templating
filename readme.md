@@ -69,12 +69,12 @@ Some quick examples of Lotus in action:
  * extracting element(s) of an array by [index|range?]
  * nested templates (django-ish?)
  * template functions (mustache-y?) - https://github.com/janl/mustache.js
-       var data = {
-               people: [
-                   {first: "Joshua", last: "Kalis"}
-               ]
-               ,name: function () {
-                   return this.first + " " + this.last;
-               }
-           }
-           ,tmpl = "{people}{name}{/people}"
+    var data = {
+            people: [
+                {first: "Joshua", last: "Kalis"}
+            ]
+            ,name: function () {
+                return this.first + " " + this.last;
+            }
+        }
+        ,tmpl = "{people}{name}{/people}"
