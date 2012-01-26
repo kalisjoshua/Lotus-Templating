@@ -64,12 +64,14 @@ Some quick examples of Lotus in action:
 
 
 ## TODO
+
  * relative scope traversing using dotdot notation
  * scope from the root of the object rather than relative to the current location
  * extracting element(s) of an array by [index|range?]
  * nested templates (django-ish?)
  * template functions (mustache-y?) - https://github.com/janl/mustache.js
- 
+
+
     var data = {
            people: [
                {first: "Joshua", last: "Kalis"}
