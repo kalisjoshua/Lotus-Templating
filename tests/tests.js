@@ -2,10 +2,10 @@ module("Lotus templating");
 
 var compress = function (str) {
         
-        return str.replace(/\s+/g, "");
+        return str.replace(/\s+/g, " ");
     }
 
-    test_data = {
+    ,test_data = {
         brittany: {
             name: {
                 first: "Brittany"
@@ -112,7 +112,7 @@ test("recursive templates for complex objects as array elements", function () {
 
         ,tmpl = 
         '<ul>\
-            {databases}<li>{name} - [{username}, {password}]{/databases}\
+            {databases}<li>{name} - [{username}, {password}] {/databases}\
         </ul>';
     
 equal(compress(lotus(tmpl, test_data.cmp)), compress(expd), '{databases}<li>{name} - [{username}, {password}]{/databases}');
@@ -129,7 +129,7 @@ test("multiple instances of a property in the template", function () {
         ,tmpl = 
         '{databases}<h2>Databases</h2>{/databases}\
         <ul>\
-            {databases}<li>{name} - [{username}, {password}]{/databases}\
+            {databases}<li>{name} - [{username}, {password}] {/databases}\
         </ul>';
     
 equal(compress(lotus(tmpl, test_data.cmp)), compress(expd), '{databases}<li>{name} - [{username}, {password}]{/databases}');

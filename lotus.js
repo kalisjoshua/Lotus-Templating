@@ -1,4 +1,4 @@
-/*
+/*/ //
 = Lotus - logically organized templating usable and simple - I just made that up!
 Syntaxically terse templating
 
@@ -25,9 +25,10 @@ Syntaxically terse templating
  - relative scope traversing using dotdot notation
  - scope from the root of the object rather than relative to the current location
  - extracting element(s) of an array by [index|range?]
-*/
+ - nested templates (django-ish?)
+/*/ //
 
-var lotus = (function (undefined) {
+var lotus = (function () {
     var next = function (tmpl, skip) {
             /* regex result items
                 0 - full match
@@ -44,7 +45,7 @@ var lotus = (function (undefined) {
         ,process = function (template, data, scope) {
             var i
                 ,len
-                ,node = next(template)
+                ,node = next(template, 0)
                 ,skip = 0
                 ,temp = ""
                 ,value;
@@ -75,7 +76,7 @@ var lotus = (function (undefined) {
                                     for (i = 0; i < len; i++) {
                                         temp += value[i].toString() === value[i].valueOf()
                                             ? node[2].replace(/\{item\}/g, value[i]) // array element is a primitive
-                                            : process(node[2], value[i]); // array element is a non-primitive
+                                            : process(node[2], value[i], []); // array element is a non-primitive
                                     }
                                 } else {
                                     // push the node we are recursing into onto the scope chain
@@ -136,26 +137,14 @@ var lotus = (function (undefined) {
                 path.pop();
                 // recurse up the property tree to search for the property higher up
                 while (path.length && !result) {
-                    // pop off the scope we just looked in since it isn't there
+                    // pop off the previous scope since the value wasn't found
                     path.pop();
                     result = resolve(needle, data, path);
                 }
             }
 
-            return result || ""; // did we find anything?
+            return result || ""; // was anything found?
         };
     
-    return function (template, data) {
-        return process(template
-            // tokenize the newline characters
-            .replace(/\n+/g, "~n~")
-            // tokenize the leading whitespace
-            .replace(/^\s+/g, "~t~")
-            // begin the templating
-            , data)
-                // replace newlines
-                .replace(/~n~/g, "\n")
-                // replace some whitespace
-                .replace(/~t~/g, "    ");
-    };
+    return process;
 }());
