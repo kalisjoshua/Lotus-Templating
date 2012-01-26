@@ -1,42 +1,7 @@
 /*/ //
-= Lotus - logically organized templating usable and simple - I just made that up!
-Syntaxically terse templating
 
-== Examples
-
-=== Simple variable lookup
-
- >>> JavaScript
- > data = {variable: "value"}
- > template = "variable is {variable}"
- > lotus(template, data)
- > // yields: 'variable is value'
-
-=== Drill-down scope resolution
-
- >>> JavaScript
- > data = {name: {first: "Joshua", last: "Kalis"}}
- > template = "My name is {name.first} {name.last}."
- > lotus(template, data)
- > // yields: 'My name is Joshua Kalis.'
-
-
-== TODO
- - relative scope traversing using dotdot notation
- - scope from the root of the object rather than relative to the current location
- - extracting element(s) of an array by [index|range?]
- - nested templates (django-ish?)
- - template functions (mustache-y?) - https://github.com/janl/mustache.js
-    var data = {
-            people: [
-                {first: "Joshua", last: "Kalis"}
-            ]
-            ,name: function () {
-                return this.first + " " + this.last;
-            }
-        }
-
-        ,tmpl = "{people}{name}{/people}"
+    Lotus - simple templating engine in JavaScript
+    Joshua T Kalis - http://joshuakalis.com
 
 /*/ //
 

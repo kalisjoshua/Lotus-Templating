@@ -61,3 +61,20 @@ Some quick examples of Lotus in action:
         ,result = lotus(tmpl, data);
 
     // result === "<ul><li>CSS<li><li>HTML<li><li>JavaScript<li></ul>"
+
+
+## TODO
+ * relative scope traversing using dotdot notation
+ * scope from the root of the object rather than relative to the current location
+ * extracting element(s) of an array by [index|range?]
+ * nested templates (django-ish?)
+ * template functions (mustache-y?) - https://github.com/janl/mustache.js
+       var data = {
+               people: [
+                   {first: "Joshua", last: "Kalis"}
+               ]
+               ,name: function () {
+                   return this.first + " " + this.last;
+               }
+           }
+           ,tmpl = "{people}{name}{/people}"
