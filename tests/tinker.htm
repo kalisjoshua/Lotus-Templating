@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>QUnit Test Suite</title>
+    <link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
+
+<body>
+    <h1 id="qunit-header">QUnit Test Suite</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">test markup</div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="qunit.js"></script>
+
+    <script src="../lotus.js"></script>
+    
+<script>
+test("tinker", function () {
+    var
+    model = {
+      "outer": {
+        "id": 1,
+        "second": {
+          "nothing": 2
+        }
+      }
+    };
+    
+    equal(lotus("{outer}{second}{id}{/second}{/outer}", model), "1");
+});
+
+// var
+//  r = /^\[object\s(?:number|string)\]$/i
+// ,s = ({}).toString
+// ,t = function (node) {
+//     r.test(s.call(node.value)) !== node.bool
+//         && console.log(node)
+// };
+
+// [
+// // Arrays
+//      {bool: false, value: [] }
+//     ,{bool: false, value: [1] }
+//     ,{bool: false, value: [""] }
+//     ,{bool: false, value: [1,2,3] }
+//     ,{bool: false, value: Array() }
+//     ,{bool: false, value: Array(10) }
+//     ,{bool: false, value: new Array(5) }
+//     ,{bool: false, value: (function () {return arguments;})() }
+// // Booleans
+//     ,{bool: false, value: true }
+//     ,{bool: false, value: Boolean(1) }
+//     ,{bool: false, value: new Boolean(0) }
+// // Dates
+//     ,{bool: true, value: Date() }
+//     ,{bool: false, value: new Date() }
+// // Errors
+//     ,{bool: false, value: Error() }
+//     ,{bool: false, value: new Error() }
+// // functions
+//     ,{bool: false, value: function () {} }
+//     ,{bool: false, value: Function("return 0") }
+//     ,{bool: false, value: new Function("return 9") }
+// // Numbers
+//     ,{bool: true, value: 0 }
+//     ,{bool: true, value: 1 }
+//     ,{bool: true, value: 123456 }
+//     ,{bool: true, value: Number(1) }
+//     ,{bool: true, value: NaN }
+//     ,{bool: true, value: 12e34 }
+//     ,{bool: true, value: -12/34 }
+// // Objects
+//     ,{bool: false, value: {} }
+//     ,{bool: false, value: {a: 1} }
+//     ,{bool: false, value: Object() }
+//     ,{bool: false, value: Object({value:"String"}) }
+// // Regular Expressions
+//     ,{bool: false, value: /regex/gi }
+//     ,{bool: false, value: RegExp("findme", "g") }
+// // Strings
+//     ,{bool: true, value: "" }
+//     ,{bool: true, value: "hello" }
+//     ,{bool: true, value: String("World!") }
+// // null/undefined
+//     ,{bool: false, value: null }
+//     ,{bool: false, value: (function (undef) {return undef;})() }
+// // special
+//     ,{bool: false, value: window }
+//     ,{bool: false, value: document }
+//     ,{bool: false, value: document.body }
+// ].forEach(t);
+</script>
