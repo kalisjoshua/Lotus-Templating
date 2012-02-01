@@ -6,7 +6,7 @@ If a value is truthy and is an opening to a block then recurse into that block a
 
 The premise is that the data drives the template and the template is clean; without complex execution directives.
 
-The second goal of Lotus was to be easy to understand from a source file perspective. I like to be able to look at code and quickly understand what is happening. This engine is incredibly short and doesn't use a bunch of trickery to process a template. For the most part all that is happening is string replacement.
+The second goal of Lotus was to be easy to understand from a source file perspective and lightweight from a filesize standpoint. I like to be able to look at code and quickly understand what's happening. This engine is incredibly short and doesn't use a bunch of trickery to process a template. For the most part all that is happening is string replacement.
 
 ## Usage
 
