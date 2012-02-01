@@ -1,46 +1,41 @@
 module("Mustache");
 
-test("ampersand_escape", function () {});
-test("apostrophe", function () {});
-test("array_of_strings", function () {});
-test("backslashes", function () {});
-test("bug_11_eating_whitespace", function () {});
-test("changing_delimiters", function () {});
-test("comments", function () {});
-test("complex", function () {});
-test("context_lookup", function () {});
-test("delimiters", function () {});
-test("disappearing_whitespace", function () {});
-test("dot_notation", function () {});
-test("double_render", function () {});
-test("empty_list", function () {});
-test("empty_sections", function () {});
-test("empty_string", function () {});
-test("empty_template", function () {});
-test("error_not_found", function () {});
-test("escaped", function () {});
-test("higher_order_sections", function () {});
-test("included_tag", function () {});
-test("inverted_section", function () {});
-test("keys_with_questionmarks", function () {});
-test("multiline_comment", function () {});
-test("nested_iterating", function () {});
-test("nesting", function () {});
-test("nesting_same_name", function () {});
-test("null_string", function () {});
-test("partial_array", function () {});
-test("partial_array_of_partials", function () {});
-test("partial_array_of_partials_implicit", function () {});
-test("partial_empty", function () {});
-test("partial_recursion", function () {});
-test("partial_template", function () {});
-test("partial_view", function () {});
-test("partial_whitespace", function () {});
-test("recursion_with_same_names", function () {});
-test("reuse_of_enumerables", function () {});
-test("section_as_context", function () {});
-test("simple", function () {});
-test("two_in_a_row", function () {});
-test("two_sections", function () {});
-test("unescaped", function () {});
-test("whitespace", function () {});
+$.get("spec/_files/", function (directory) {
+    $(directory)
+        .find("a")
+        .filter(function (indx, node) {return /js$/.test(node.href)})
+        .map(function (indx, node) {return node.href.replace(/^.*\/|\..*$/g, "")})
+        .each(function (indx, node) {
+            var model, expected, template;
+
+            $.when(
+                $.get("spec/_files/" + node + ".js", function (result) {
+                    model = (new Function ("return " + result.slice(result.indexOf('{'), 1 + result.lastIndexOf('}'))))();
+                })
+
+                ,$.get("spec/_files/" + node + ".txt", function (result) {
+                    expected = result
+                        .replace(/&#([^\)]+?);/g, function (full, code) {
+                            return String.fromCharCode(code);
+                        });
+                })
+
+                ,$.get("spec/_files/" + node + ".mustache", function (result) {
+                    template = result
+                        // convert to lotus templating syntaxes
+
+                        //  - remove template comments
+                        .replace(/\{\{![^\}\}]*\}/, "")
+
+                        //  - remove block scoping syntax (#)
+                        //  - remove output unescaping syntax: {{&value}} and {{{value}}} - triple-stash the double-stash
+                        .replace(/(\{|\})\1\1?[#&]?/g, "$1")
+                })
+            )
+            .then(function () {
+                test(node, function () {
+                    equal(lotus(template, model), expected);
+                });
+            });
+        });
+});
