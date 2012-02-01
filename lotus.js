@@ -52,8 +52,12 @@ var lotus = (function () {
                                     // loop over the elements of the value array
                                     for (i = 0; i < len; i++) {
                                         temp += value[i].toString() === value[i].valueOf()
-                                            ? node[2].replace(/\{item\}/g, value[i]) // array element is a primitive
-                                            : process(node[2], value[i], []); // array element is a non-primitive
+                                            // array element is a primitive
+                                            ? node[2]
+                                                .replace(/\{(?:\.|item)\}/g, value[i]) // use dot or "item" for current item
+                                                .replace(/\{#\}/, i) // use [hash, number, pound] (#) for the item's index in the list
+                                            // array element is a non-primitive
+                                            : process(node[2], value[i], []);
                                     }
                                 } else {
                                     // push the node we are recursing into onto the scope chain
@@ -91,7 +95,7 @@ var lotus = (function () {
 
         resolve = function (needle, data, scope) {
             var i = 0
-                ,len = 0
+                ,len
                 ,path = scope.slice(0) // "... did you make a copy, because if you did we could [use] the copy."
                 ,result;
             

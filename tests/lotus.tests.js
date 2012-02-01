@@ -149,7 +149,7 @@ test("data with similar syntax as Lotus", function () {
 equal(lotus(t, d), e, t);
 });
 
-/*
+
 test("scope chain relative-scoped properties", function () {
     var expd = 
         '<div>\
@@ -206,7 +206,20 @@ test("scope chain absolute-scoped properties", function () {
 // equal(compress(lotus(tmpl, data)), compress(expd), "output of template engine");
 });
 
+test("list item index", function () {
+    var data = {
+            list: [
+                "Alpha"
+                ,"Beta"
+                ,"Gamma"
+            ]
+        }
 
-// {array.[index|#]}
+        ,expd = 
+        '0 Alpha 1 Beta 2 Gamma '
 
-// */
+        ,tmpl = 
+        '{list}{#} {.} {/list}';
+    
+equal(lotus(tmpl, data), expd, "output of template engine");
+});

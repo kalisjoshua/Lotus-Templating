@@ -42,7 +42,7 @@ Some quick examples of Lotus in action:
     
     // result === "Putting my lastname first - Kalis, Joshua."
 
-### Now with an else if the value is falsy
+### Now with an else if the value is falsey
 
     var data = {}
 
@@ -61,6 +61,16 @@ Some quick examples of Lotus in action:
         ,result = lotus(tmpl, data);
 
     // result === "<ul><li>CSS<li><li>HTML<li><li>JavaScript<li></ul>"
+
+### Also get the index of the item with the item
+
+    var data = { list: [ "Alpha", "Beta", "Gamma" ] }
+
+        ,tmpl = "{list}{#} {.} {/list}"
+
+        ,result = lotus(tmpl, data);
+
+    // result === "0 Alpha 1 Beta 2 Gamma "
 
 
 ## TODO
