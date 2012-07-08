@@ -1,18 +1,22 @@
-/*/ //
+/*
+Lotus - simple templating engine in JavaScript
+Joshua T Kalis - http://joshuakalis.com
+*/
+/*jslint node:true*/
 
-    Lotus - simple templating engine in JavaScript
-    Joshua T Kalis - http://joshuakalis.com
-
-/*/ //
-
-var lotus = (function () {
+;(function (global) {
+    "use strict";
     var
-    rBlocks = /\{([^\/\}]+)\}(?:(.*?)(?:\{else\}(.*?))?\{\/\1\})?/
-    ,rItems = /\{(?:\.|item)\}/g
-    ,rItemIndexes = /\{#\}/
-    ,rPrimitives = /^\[object\s(?:number|string)\]$/i
+        rBlocks = /\{([^\/\}]+)\}(?:(.*?)(?:\{else\}(.*?))?\{\/\1\})?/
+      , rItems = /\{(?:\.|item)\}/g
+      , rItemIndexes = /\{#\}/
+      , rPrimitives = /^\[object\s(?:number|string)\]$/i
 
-    ,next = function (tmpl, skip) {
+      , next
+      , process
+      , resolve;
+
+    next = function (tmpl, skip) {
         /* regex result items
             0 - full match
             1 - block identifier/lookup key
@@ -22,10 +26,10 @@ var lotus = (function () {
         return tmpl
             .slice(skip)
             .match(rBlocks);
-    }
+    };
 
     // add scope chain argument for calling back up in the object
-    ,process = function (template, data, scope) {
+    process = function (template, data, scope) {
         var i
             ,len
             ,node = next(template, 0)
@@ -57,13 +61,17 @@ var lotus = (function () {
                                 len = value.length;
                                 // loop over the elements of the value array
                                 for (i = 0; i < len; i++) {
-                                    temp += value[i].toString() === value[i].valueOf()
+                                    if (value[i].toString() === value[i].valueOf()) {
                                         // array element is a primitive
-                                        ? node[2]
-                                            .replace(rItems, value[i]) // use dot or "item" for current item
-                                            .replace(rItemIndexes, i) // use [hash, number, pound] (#) for the item's index in the list
+                                        temp += node[2]
+                                            // use dot or "item" for current item
+                                            .replace(rItems, value[i])
+                                            // use [hash, number, pound] (#) for the item's index in the list;
+                                            .replace(rItemIndexes, i);
+                                    } else {
                                         // array element is a non-primitive
-                                        : process(node[2], value[i], []);
+                                        temp += process(node[2], value[i], []);
+                                    }
                                 }
                             } else {
                                 // push the node we are recursing into onto the scope chain
@@ -97,7 +105,7 @@ var lotus = (function () {
 
             return template;
         }
-    }
+    };
 
     resolve = function (needle, data, scope) {
         var i = 0
@@ -107,7 +115,7 @@ var lotus = (function () {
         
         // create one path to search with full scope and property
         ([]).push.apply(path, needle.split("."));
-        len = path.length
+        len = path.length;
         // start off the result with a lookup into the data object
         result = data[path[i++]];
         // needle now refers to the actual property being searched for instead of having dot notation
@@ -133,5 +141,12 @@ var lotus = (function () {
         return result || ""; // was anything found?
     };
     
-    return process;
-}());
+    global.lotus = process;
+}((function () {
+    "use strict";
+    try {
+        return exports;
+    } catch (e) {
+        return window;
+    }
+}())));
